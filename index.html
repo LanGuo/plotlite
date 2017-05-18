@@ -1,44 +1,79 @@
 <!DOCTYPE html>
 <html>
-<head>
-<pre>
-Welcome to Plotlite easy charts!!!!
+  <head>
+    <h2>
+    Welcome to Plotlite easy charts!!!!
+    </h2>
 
-Plotlite format guide:
-The first line should start with a <strong>chart type</strong> keyword, followed by your chart title. 
-The second line starts with the <em>xData</em> keyword, followed by data to be plotted on the x-axis.
-The third line starts with the <em>yData</em> keyword, followed by data to be plotted on the y-axis.
+    <h3>Plotlite format guide:</h3>
+    
+    <ol>
+      <li>
+      The first line should start with a <strong>chart type</strong> keyword, followed by your chart title. 
+      </li>
+      <li>
+      The second line starts with the <em>xData</em> keyword, followed by data to be plotted on the x-axis.
+      </li>
+      <li>
+      The third line starts with the <em>yData</em> keyword, followed by data to be plotted on the y-axis.
+      </li>
+    </ol>
+    For chart type, we support <em>scatter, bar</em> plots.
 
-For chart type, we support <em>scatter, bar</em> plots.
-
-An example Plotlite code:
-<code>
-scatter My awesome scatter plot
-xData 1,2,3,4,5,6,7,8
-yData 2,4,6,8,10,12,14,16
-</code>
-This code will produce a chart like this:
-<!-- <iframe width="900" height="800" frameborder="0" scrolling="no" src="//plot.ly/~languo/1.embed"></iframe>
+    <h4>An example Plotlite code:</h4>
+      <code>
+      scatter My awesome scatter plot
+      xData 1,2,3,4,5,6,7,8
+      yData 2,4,6,8,10,12,14,16
+      </code>
+    <h4>This code will produce a chart like this:</h4>
+      <!-- <iframe width="900" height="800" frameborder="0" scrolling="no" src="//plot.ly/~languo/1.embed"></iframe>
  -->
- <div>
-    <a href="https://plot.ly/~languo/1/?share_key=713l4Rvm0kgt0qFHvTzSp5" target="_blank" title="simpleScatterExample" style="display: block; text-align: center;"><img src="https://plot.ly/~languo/1.png?share_key=713l4Rvm0kgt0qFHvTzSp5" alt="simpleScatterExample" style="max-width: 100%;width: 600px;"  width="600" onerror="this.onerror=null;this.src='https://plot.ly/404.png';" /></a>
-    <script data-plotly="languo:1" sharekey-plotly="713l4Rvm0kgt0qFHvTzSp5" src="https://plot.ly/embed.js" async></script>
-</div>
+      <div>
+        <a 
+          href="https://plot.ly/~languo/1/?share_key=713l4Rvm0kgt0qFHvTzSp5" 
+          target="_blank" 
+          title="simpleScatterExample" 
+          style="display: block; text-align: center;">
+          <img 
+            src="https://plot.ly/~languo/1.png?share_key=713l4Rvm0kgt0qFHvTzSp5" 
+            alt="simpleScatterExample"
+            style="max-width: 100%;width: 600px;"  
+            width="600"
+            onerror="this.onerror=null;this.src='https://plot.ly/404.png';" />
+        </a>
+        <script 
+          data-plotly="languo:1" 
+          sharekey-plotly="713l4Rvm0kgt0qFHvTzSp5" 
+          src="https://plot.ly/embed.js" 
+          async>
+        </script>
+      </div>
 
-Try it out by putting your Plotlite code here:
-</pre>
-</head>
-<body>
-<textarea id="plotliteCode" rows="5" cols="50" style="border:1px solid red;width:100%;">
-</textarea>
+    <h4>Try it out by putting your Plotlite code here:</h4>
+    
+  </head>
+  <body>
+    <textarea 
+      id="plotliteCode" 
+      rows="5" 
+      cols="50" 
+      style="border:1px solid red;width:100%;">
+    </textarea>
 
-<script src='./plotlite.js'>
+    <script src='./plotlite.js'>
 
-</script>
+    </script>
 
-<button id="button" onclick="plotliteTranslate()">See your plot!</button>
+    <button 
+      id="button" 
+      onclick="plotliteTranslate()">
+      See your plot!
+    </button>
 
-<pre id="plotly"> </pre>
+    <pre 
+      id="plotly"> 
+    </pre>
 
-</body>
+  </body>
 </html>
