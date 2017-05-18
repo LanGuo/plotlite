@@ -4,14 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "(sleep 2 && open 'http://localhost:8888/' &) && http-server -c-1 -p 8888 ."
   },
-  "author": "",
+  "author": "languo",
   "license": "ISC",
   "devDependencies": {
     "babel-core": "^6.21.0",
     "babel-eslint": "^7.1.1",
-    "babel-loader": "^6.2.10",
     "babel-plugin-transform-flow-strip-types": "^6.21.0",
     "babel-preset-es2015": "^6.18.0",
     "babel-runtime": "^6.20.0",
