@@ -27,7 +27,7 @@ function plotliteToPlotly(input) {
         var yDataLine = lines[2];
         var xData = xDataLine.split(/,\s*|\s+/).filter(Number);
         var yData = yDataLine.split(/,\s*|\s+/).filter(Number);
-        if ((xData.length === 0) | (yData.length === 0)) {
+        if ((xData.length === 0) || (yData.length === 0)) {
           output = "Please input both x and y data.";
         }
         else {
