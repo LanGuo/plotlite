@@ -9,26 +9,26 @@ For chart type, currently supporting scatter, bar plots.
 function plotliteToPlotly(input) {
 
   if (!input) {
-    var output = "Please input PlotLite code.";
+    var output = 'Please input PlotLite code.';
   }
   else {
     let lines = input.split('\n');
     if (lines.length < 3) {
-      output = "Insuffient inputs. Please refer to format guide for input formatting!";
+      output = 'Insuffient inputs. Please refer to format guide for input formatting!';
     }
     else {
       const plotLine = lines[0].trim();
       const plotLineEndOfType = plotLine.indexOf(' ');
       const plotType = plotLine.slice(0, plotLineEndOfType);
       const plotTitle = plotLine.slice(plotLineEndOfType + 1).trim();
-      
-      if (plotType === "scatter" || plotType === "bar") {
-        var xDataLine = lines[1];
-        var yDataLine = lines[2];
-        var xData = xDataLine.split(/,\s*|\s+/).filter(Number);
-        var yData = yDataLine.split(/,\s*|\s+/).filter(Number);
+
+      if (plotType === 'scatter' || plotType === 'bar') {
+        const xDataLine = lines[1];
+        const yDataLine = lines[2];
+        const xData = xDataLine.split(/,\s*|\s+/).filter(Number);
+        const yData = yDataLine.split(/,\s*|\s+/).filter(Number);
         if ((xData.length === 0) || (yData.length === 0)) {
-          output = "Please input both x and y data.";
+          output = 'Please input both x and y data.';
         }
         else {
           output =
@@ -46,14 +46,14 @@ function plotliteToPlotly(input) {
           Plotly.plot(this.div, [{
             x: [${xData}],
             y: [${yData}],
-            type: '${plotType}' }], 
+            type: '${plotType}' }],
             layout,
             {displayModeBar: false});
           `;
         }
       }
       else {
-	output = "Undefined chart type! Please declare your chart type in the first line of your input. Supported chart types: scatter, bar #to add more later";
+	output = 'Undefined chart type! Please declare your chart type in the first line of your input. Supported chart types: scatter, bar #to add more later';
       }
     }
   }
@@ -62,6 +62,6 @@ function plotliteToPlotly(input) {
 
 
 function plotliteTranslate() {
-  const x = document.getElementById("plotliteCode").value;
-  document.getElementById("plotly").innerHTML = plotliteToPlotly(x);
+  const x = document.getElementById('plotliteCode').value;
+  document.getElementById('plotly').innerHTML = plotliteToPlotly(x);
 }
