@@ -15,11 +15,9 @@ function parsePlotLine(plotLine){
 }
 
 function parseData(dataLine){
-  const [dim, data] = dataLine.split(/\s/);
-  const yData = yDataLine.split(/,\s*|\s+/).filter(Number);
-        if ((xData.length === 0) || (yData.length === 0)) {
-          output = 'Please input both x and y data.';
-        }
+  const dim = dataLine.match(/[xyz](?!data)/i); //matches x,y,or z followed by 'data'
+  const data = dataLine.match(/[-*.*0-9]+|\s(?!,)/g); //matches any signed or unsigned numbers and spaces followed by ',' globally
+  return {dim, data};    
 }
 
 function parsePlotlite(input) {
