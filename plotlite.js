@@ -17,11 +17,26 @@ function parsePlotLine(plotLine){
 function parseData(dataLine){
   const dim = dataLine.match(/[xyz](?!data)/i); //matches x,y,or z followed by 'data'
   const data = dataLine.match(/[-*.*0-9]+|\s(?!,)/g); //matches any signed or unsigned numbers and spaces followed by ',' globally
-  return {dim, data};    
+  return {dim:dim, data:data};    
 }
 
-function parsePlotlite(input) {
-
+function parsePlotlite(input, outputDiv) {
+  try {
+    if(!input) throw 'Please input PlotLite code.';
+    const lines = input.split('\n');
+    const numLines = lines.length; 
+    if(numLines < 3) throw 'Insuffient inputs. Please refer to format guide for input formatting!';
+    const plotLine = lines[0];
+    const plotType, plotTitle;
+    plotType, plotTitle = parsePlotLine(plotLine);
+    if (plotType !== 'scatter' && plotType !== 'bar') throw 'Undefined chart type! Supported chart types: scatter, bar.';
+    const dataLines = lines.slice(1);
+    dataLines.forEach(	
+  }
+  catch(err) {
+        outputDiv.innerHTML = err;
+    }
+  /*	
   if (!input) {
     var output = 'Please input PlotLite code.';
   }
