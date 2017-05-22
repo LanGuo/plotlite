@@ -6,7 +6,23 @@ The second line starts with the xData keyword, followed by data to be plotted on
 The third line starts with the yData keyword, followed by data to be plotted on the y-axis.
 For chart type, currently supporting scatter, bar plots.
 */
-function plotliteToPlotly(input) {
+
+function parsePlotLine(plotLine){
+  const plotLineEndOfType = plotLine.indexOf(' ');
+  const plotType = plotLine.slice(0, plotLineEndOfType);
+  const plotTitle = plotLine.slice(plotLineEndOfType + 1).trim();
+  return {plotType:plotType, plotTitle:plotTitle};
+}
+
+function parseData(dataLine){
+  const [dim, data] = dataLine.split(/\s/);
+  const yData = yDataLine.split(/,\s*|\s+/).filter(Number);
+        if ((xData.length === 0) || (yData.length === 0)) {
+          output = 'Please input both x and y data.';
+        }
+}
+
+function parsePlotlite(input) {
 
   if (!input) {
     var output = 'Please input PlotLite code.';
@@ -18,9 +34,7 @@ function plotliteToPlotly(input) {
     }
     else {
       const plotLine = lines[0].trim();
-      const plotLineEndOfType = plotLine.indexOf(' ');
-      const plotType = plotLine.slice(0, plotLineEndOfType);
-      const plotTitle = plotLine.slice(plotLineEndOfType + 1).trim();
+      const plotType, plotTitle = parsePlotLine(plotLine);
 
       if (plotType === 'scatter' || plotType === 'bar') {
         const xDataLine = lines[1];
