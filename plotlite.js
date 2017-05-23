@@ -130,7 +130,7 @@ function generatePlotlyPlot(plotType, plotTitle, dataObject, outputDiv) {
 function plotliteToPlotly() {
   let input = document.getElementById('plotliteCode').value;
   let outputDiv = document.getElementById('plotly');
-  let plotType, plotTitle, dataObject, errorMessage = parsePlotlite(input);
+  let ({plotType, plotTitle, dataObject, errorMessage}) = parsePlotlite(input);
 
   if (errorMessage) {
     outputDiv.innerHTML = errorMessage;
