@@ -28,7 +28,7 @@ function parsePlotLine(plotLine) {
 
 function parseData(dataLine) {
   const dim = dataLine.match(/[xyz](?!Data)/); // matches x,y,or z followed by 'Data'
-  const data = dataLine.match(/[-*.*0-9]+|\s(?!,)/g); // matches any signed or unsigned numbers and spaces followed by ',' globally
+  const data = dataLine.match(/[-*.*0-9]+|\s(?!,)/g); // globally matches any signed or unsigned numbers and spaces followed by ',' 
   if (!dim) {
     return {dim: null, data: null};
   }
@@ -79,10 +79,13 @@ function parsePlotlite(input) {
     };
   }
 
-  const dataLines = lines.slice(1);
+  let dataLines = lines.slice(1); // an Array of lines(strings) containing data
+  dataLines = dataLines.filter(entry => entry.trim() != ''); // throw away empty lines
+  console.log(dataLines);
   for (let dataLine of dataLines) {
     let dim, data;
     ({dim, data} = parseData(dataLine));
+    console.log(dim, data);
     if (!dim || !data) {
       errorMessage = 'Please provide xData and yData for plotting.';
       return {
@@ -130,13 +133,16 @@ function generatePlotlyPlot(plotType, plotTitle, dataObject, outputDiv) {
 function plotliteToPlotly() {
   let input = document.getElementById('plotliteCode').value;
   let outputDiv = document.getElementById('plotly');
-  let ({plotType, plotTitle, dataObject, errorMessage}) = parsePlotlite(input);
+  let {plotType, plotTitle, dataObject, errorMessage} = parsePlotlite(input);
+  console.log(plotType, plotTitle, dataObject);
 
   if (errorMessage) {
     outputDiv.innerHTML = errorMessage;
   }
   else {
-    generatePlotlyPlot(plotType, plotTitle, dataObject, outputDiv);
+    //generatePlotlyPlot(plotType, plotTitle, dataObject, outputDiv);
+    outputDiv.innerHTML = [plotType,plotTitle,errorMessage].join('-');
+    console.log(dataObject);
   }
 }
 
