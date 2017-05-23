@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <script src='https://cdn.plot.ly/plotly-1.2.0.min.js'>
+    </script>
+
   </head>
   <body>
     <h2>
@@ -8,10 +11,10 @@
     </h2>
 
     <h3>Plotlite format guide:</h3>
-    
+
     <ol>
       <li>
-      The first line should start with a <strong>chart type</strong> keyword, followed by your chart title. 
+      The first line should start with a <strong>chart type</strong> keyword, followed by your chart title.
       For chart type, we currently support <em>scatter, bar</em> plots.
       </li>
       <li>
@@ -23,57 +26,34 @@
     </ol>
 
     <h4>An example Plotlite code:</h4>
-      <code>
+      <!-- <code>
       scatter My awesome scatter plot
       xData 1,2,3,4,5,6,7,8
       yData 2,4,6,8,10,12,14,16
-      </code>
-    <h4>This code will produce a chart like this:</h4>
-      <!-- <iframe width="900" height="800" frameborder="0" scrolling="no" src="//plot.ly/~languo/1.embed"></iframe>
- -->
-      <div>
-        <a 
-          href="https://plot.ly/~languo/1/?share_key=713l4Rvm0kgt0qFHvTzSp5" 
-          target="_blank" 
-          title="simpleScatterExample" 
-          style="display: block; text-align: center;">
-          <img 
-            src="https://plot.ly/~languo/1.png?share_key=713l4Rvm0kgt0qFHvTzSp5" 
-            alt="simpleScatterExample"
-            style="max-width: 100%;width: 600px;"  
-            width="600"
-            onerror="this.onerror=null;this.src='https://plot.ly/404.png';" />
-        </a>
-        <script 
-          data-plotly="languo:1" 
-          sharekey-plotly="713l4Rvm0kgt0qFHvTzSp5" 
-          src="https://plot.ly/embed.js" 
-          async>
-        </script>
-      </div>
-
-    <h4>Try it out by putting your Plotlite code here:</h4>
-    
-    <textarea 
-      id="plotliteCode" 
-      rows="5" 
-      cols="50" 
-      style="border:1px solid red;width:100%;">
-    </textarea>
+      </code> -->
 
     <script src='./plotlite.js'>
-
     </script>
 
-    <button 
-      id="button" 
-      onclick="plotliteTranslate()">
+    <textarea
+      id="plotliteCode"
+      rows="5"
+      cols="50"
+      style="border:1px solid red;width:100%;">
+scatter My awesome scatter plot
+xData 1,2,3,4,5,6,7,8
+yData 2,4,6,8,10,12,14,16
+    </textarea>
+
+    <h4>This code will produce a chart like this:</h4>
+
+    <div id="plotly" style="width:600px;height:250px;"></div>
+    <button
+      id="button"
+      onclick="plotliteToPlotly()">
       See your plot!
     </button>
 
-    <pre 
-      id="plotly"> 
-    </pre>
 
   </body>
 </html>

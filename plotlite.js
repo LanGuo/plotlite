@@ -7,36 +7,142 @@ The third line starts with the yData keyword, followed by data to be plotted on 
 For chart type, currently supporting scatter, bar plots.
 */
 
-function parsePlotLine(plotLine){
+
+function prepopulateExample() {
+  let examplePlotLite = `
+  scatter My awesome scatter plot
+  xData 1,2,3,4,5,6,7,8
+  yData 2,4,6,8,10,12,14,16
+`;
+  let exampleContainer = document.getElementById('plotliteCode');
+  exampleContainer.value = examplePlotLite;
+}
+
+
+function parsePlotLine(plotLine) {
   const plotLineEndOfType = plotLine.indexOf(' ');
   const plotType = plotLine.slice(0, plotLineEndOfType);
   const plotTitle = plotLine.slice(plotLineEndOfType + 1).trim();
-  return {plotType:plotType, plotTitle:plotTitle};
+  return {plotType: plotType, plotTitle: plotTitle};
 }
 
-function parseData(dataLine){
-  const dim = dataLine.match(/[xyz](?!data)/i); //matches x,y,or z followed by 'data'
-  const data = dataLine.match(/[-*.*0-9]+|\s(?!,)/g); //matches any signed or unsigned numbers and spaces followed by ',' globally
-  return {dim:dim, data:data};    
-}
-
-function parsePlotlite(input, outputDiv) {
-  try {
-    if(!input) throw 'Please input PlotLite code.';
-    const lines = input.split('\n');
-    const numLines = lines.length; 
-    if(numLines < 3) throw 'Insuffient inputs. Please refer to format guide for input formatting!';
-    const plotLine = lines[0];
-    const plotType, plotTitle;
-    plotType, plotTitle = parsePlotLine(plotLine);
-    if (plotType !== 'scatter' && plotType !== 'bar') throw 'Undefined chart type! Supported chart types: scatter, bar.';
-    const dataLines = lines.slice(1);
-    dataLines.forEach(	
+function parseData(dataLine) {
+  const dim = dataLine.match(/[xyz](?!Data)/); // matches x,y,or z followed by 'Data'
+  const data = dataLine.match(/[-*.*0-9]+|\s(?!,)/g); // matches any signed or unsigned numbers and spaces followed by ',' globally
+  if (!dim) {
+    return {dim: null, data: null};
   }
-  catch(err) {
-        outputDiv.innerHTML = err;
+  if (!data) {
+    return {dim: dim, data: null};
+  }
+
+  return {dim: dim, data: data};
+}
+
+function parsePlotlite(input) {
+  let plotType = '',
+    plotTitle = '',
+    dataObject = {},
+    errorMessage = '';
+
+  if (!input) {
+    errorMessage = 'Please input PlotLite code.';
+    return {
+      plotType: plotType,
+      plotTitle: plotTitle,
+      dataObject: dataObject,
+      errorMessage: errorMessage
+    };
+  }
+
+  const lines = input.split('\n');
+  const numLines = lines.length;
+  if (numLines < 3) {
+    errorMessage = 'Insuffient inputs. Please refer to format guide for input formatting!';
+    return {
+      plotType: plotType,
+      plotTitle: plotTitle,
+      dataObject: dataObject,
+      errorMessage: errorMessage
+    };
+  }
+
+  const plotLine = lines[0];
+  ({plotType, plotTitle} = parsePlotLine(plotLine));
+  if (plotType !== 'scatter' && plotType !== 'bar') {
+    errorMessage = 'Undefined chart type! Supported chart types: scatter, bar.';
+    return {
+      plotType: plotType,
+      plotTitle: plotTitle,
+      dataObject: dataObject,
+      errorMessage: errorMessage
+    };
+  }
+
+  const dataLines = lines.slice(1);
+  for (let dataLine of dataLines) {
+    let dim, data;
+    ({dim, data} = parseData(dataLine));
+    if (!dim || !data) {
+      errorMessage = 'Please provide xData and yData for plotting.';
+      return {
+      plotType: plotType,
+      plotTitle: plotTitle,
+      dataObject: dataObject,
+      errorMessage: errorMessage
+      };
     }
-  /*	
+    else {
+      dataObject[dim] = data;
+    }
+  }
+
+  return {
+      plotType: plotType,
+      plotTitle: plotTitle,
+      dataObject: dataObject,
+      errorMessage: errorMessage
+    };
+}
+
+function generatePlotlyPlot(plotType, plotTitle, dataObject, outputDiv) {
+  const xData = dataObject.xData;
+  const yData = dataObject.yData;
+
+  var layout = {
+    title: plotTitle,
+    autosize: true,
+    width: 500,
+    height: 300,
+    margin: {
+      t: 100, b: 0, l: 0, r: 0
+    }
+  };
+  /* global Plotly */
+  Plotly.plot(outputDiv, [{
+    x: xData,
+    y: yData,
+    type: plotType }],
+    layout,
+    {displayModeBar: false});
+}
+
+function plotliteToPlotly() {
+  let input = document.getElementById('plotliteCode').value;
+  let outputDiv = document.getElementById('plotly');
+  let plotType, plotTitle, dataObject, errorMessage = parsePlotlite(input);
+
+  if (errorMessage) {
+    outputDiv.innerHTML = errorMessage;
+  }
+  else {
+    generatePlotlyPlot(plotType, plotTitle, dataObject, outputDiv);
+  }
+}
+
+
+
+  /*
   if (!input) {
     var output = 'Please input PlotLite code.';
   }
@@ -87,8 +193,8 @@ function parsePlotlite(input, outputDiv) {
   return output;
 }
 
-
 function plotliteTranslate() {
   const x = document.getElementById('plotliteCode').value;
   document.getElementById('plotly').innerHTML = plotliteToPlotly(x);
 }
+*/
