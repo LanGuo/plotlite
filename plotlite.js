@@ -13,90 +13,70 @@ function parsePlotLine(plotLine) {
   const plotLineEndOfType = plotLine.indexOf(' ');
   const plotType = plotLine.slice(0, plotLineEndOfType);
   const plotTitle = plotLine.slice(plotLineEndOfType + 1).trim();
-  return {plotType: plotType, plotTitle: plotTitle};
+  return {
+    plotType: plotType,
+    plotTitle: plotTitle
+  };
 }
 
 function parseData(dataLine) {
-  const dim = dataLine.match(/[xyz](?=Data)/); // matches x,y,or z followed by 'Data'
-  const data = dataLine.match(/[-*.*0-9]+|\s(?=,)/g); // globally matches any signed or unsigned numbers and spaces followed by ','
+  let dim = dataLine.match(/[xyz](?=Data)/); // matches x,y,or z followed by 'Data'
+  let data = dataLine.match(/[-*.*0-9]+|\s(?=,)/g); // globally matches any signed or unsigned numbers and spaces followed by ','
   if (!dim) {
-    return {dim: null, data: null};
+    data = null;
   }
-  if (!data) {
-    return {dim: dim, data: null};
-  }
-
-  return {dim: dim, data: data};
+  return {
+    dim: dim,
+    data: data
+  };
 }
 
 function parsePlotlite(input) {
-  let plotType = '',
-    plotTitle = '',
-    dataObject = {},
-    errorMessage = '';
+  let plotType = null;
+  let plotTitle = '';
+  let dataObject = {};
+  let errorMessage = '';
+  let numLines = 0;
+  let lines;
 
   if (!input) {
     errorMessage = 'Please input PlotLite code.';
-    return {
-      plotType: plotType,
-      plotTitle: plotTitle,
-      dataObject: dataObject,
-      errorMessage: errorMessage
-    };
   }
-
-  const lines = input.split('\n');
-  const numLines = lines.length;
-  if (numLines < 3) {
+  else {
+    lines = input.split('\n');
+    numLines = lines.length;
+  }
+  if (numLines < 3 && numLines > 0) {
     errorMessage = 'Insuffient inputs. Please refer to format guide for input formatting!';
-    return {
-      plotType: plotType,
-      plotTitle: plotTitle,
-      dataObject: dataObject,
-      errorMessage: errorMessage
-    };
   }
-
-  const plotLine = lines[0];
-  ({plotType, plotTitle} = parsePlotLine(plotLine));
-
-  if (plotType !== 'scatter' && plotType !== 'bar') {
-    errorMessage = 'Undefined chart type! Supported chart types: scatter, bar.';
-    return {
-      plotType: plotType,
-      plotTitle: plotTitle,
-      dataObject: dataObject,
-      errorMessage: errorMessage
-    };
-  }
-
-  let dataLines = lines.slice(1); // an Array of lines(strings) containing data
-  dataLines = dataLines.filter(entry => entry.trim() !== ''); // throw away empty lines
-
-  for (let dataLine of dataLines) {
-    let dim, data; // dim stores the dimension of the data, e.g. 'x' or 'y'
-    ({dim, data} = parseData(dataLine));
-    // console.log(dim, data);
-    if (!dim || !data) {
-      errorMessage = 'Please provide xData and yData for plotting.';
-      return {
-      plotType: plotType,
-      plotTitle: plotTitle,
-      dataObject: dataObject,
-      errorMessage: errorMessage
-      };
-    }
-    else {
-      dataObject[dim] = data;
+  else if (numLines >= 3) {
+    const plotLine = lines[0];
+    ({plotType, plotTitle} = parsePlotLine(plotLine));
+    if (plotType !== 'scatter' && plotType !== 'bar') {
+      errorMessage = 'Undefined chart type! Supported chart types: scatter, bar.';
+      plotType = null;
     }
   }
-
+  if (plotType !== null) {
+    let dataLines = lines.slice(1); // an Array of lines(strings) containing data
+    dataLines = dataLines.filter(entry => entry.trim() !== ''); // throw away empty lines
+    for (let dataLine of dataLines) {
+      // dim stores the dimension of the data, e.g. 'x' or 'y'
+      let {dim, data} = parseData(dataLine);
+      if (!dim || !data) {
+        errorMessage = 'Please provide xData and yData for plotting.';
+      }
+      else {
+        dataObject[dim] = data;
+      }
+    }
+  }
   return {
-      plotType: plotType,
-      plotTitle: plotTitle,
-      dataObject: dataObject,
-      errorMessage: errorMessage
-    };
+    plotType: plotType,
+    plotTitle: plotTitle,
+    dataObject: dataObject,
+    errorMessage: errorMessage
+  };
 }
 
 function generatePlotlyPlot(plotType, plotTitle, dataObject, outputDiv) {
@@ -113,7 +93,7 @@ function generatePlotlyPlot(plotType, plotTitle, dataObject, outputDiv) {
     }
   };
   /* global Plotly */
-  Plotly.plot(outputDiv, [{
+  Plotly.newPlot(outputDiv, [{
     x: xData,
     y: yData,
     type: plotType }],
@@ -125,7 +105,6 @@ function plotliteToPlotly() {
   let input = document.getElementById('plotliteCode').value;
   let outputDiv = document.getElementById('plotly');
   let {plotType, plotTitle, dataObject, errorMessage} = parsePlotlite(input);
-
   if (errorMessage) {
     outputDiv.innerHTML = errorMessage;
   }
@@ -133,4 +112,3 @@ function plotliteToPlotly() {
     generatePlotlyPlot(plotType, plotTitle, dataObject, outputDiv);
   }
 }
-

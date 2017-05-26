@@ -2,7 +2,17 @@
 <html>
   <head>
     <script src='https://cdn.plot.ly/plotly-1.2.0.min.js'></script>
-    <meta charset="utf-8" /> 
+    <meta charset="utf-8" />
+    <style>
+    .inputBox {
+      border: 2px solid green;
+      background: lightyellow;
+      width:100%;
+    }
+    .plotBox {
+      border: 2px solid grey;
+    }
+    </style>
   </head>
   <body>
     <h2>
@@ -32,7 +42,8 @@
       id="plotliteCode"
       rows="5"
       cols="50"
-      style="border:1px solid red;width:100%;">
+      class='inputBox'
+      xstyle="border:1px solid red;width:100%;">
 scatter My awesome scatter plot
 xData 1,2,3,4,5,6,7,8
 yData 2,4,6,8,10,12,14,16
@@ -45,7 +56,7 @@ yData 2,4,6,8,10,12,14,16
       onclick="plotliteToPlotly()">
       See your plot!
     </button>
-    <div id="plotly" style="width:600px;height:250px;"></div>
+    <div id="plotly" class="plotBox" xstyle="width:600px;height:250px;"></div>
 
 
 
