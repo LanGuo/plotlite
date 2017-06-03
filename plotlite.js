@@ -1,14 +1,14 @@
 
 /*
-This function parses PlotLite format strings and output plotly format strings.
-PlotList format guide:
+PlotLite is a declarative ploting language that aims to simplify the making of interactive plots. This script translates PlotLite code to plotly.js. 
+PlotLite format guide:
 The first line should start with a chart type keyword, followed by the chart title.
 The second line starts with the xData keyword, followed by data to be plotted on the x-axis.
 The third line starts with the yData keyword, followed by data to be plotted on the y-axis.
 For chart type, currently supporting scatter, bar plots.
-
 */
 
+// function to parse plot type and plot title line.
 function parsePlotLine(plotLine) {
   const plotLineEndOfType = plotLine.indexOf(' ');
   const plotType = plotLine.slice(0, plotLineEndOfType);
@@ -19,6 +19,7 @@ function parsePlotLine(plotLine) {
   };
 }
 
+// function to parse x/y/zData line.
 function parseData(dataLine) {
   let dim = dataLine.match(/[xyz](?=Data)/); // matches x,y,or z followed by 'Data'
   let data = dataLine.match(/[-*.*0-9]+|\s(?=,)/g); // globally matches any signed or unsigned numbers and spaces followed by ','
@@ -31,6 +32,7 @@ function parseData(dataLine) {
   };
 }
 
+// function that parses PlotLite code to get variables needed for a plotly plot.
 function parsePlotlite(input) {
   let plotType = null;
   let plotTitle = '';
@@ -79,6 +81,7 @@ function parsePlotlite(input) {
   };
 }
 
+// function that calls plotly to generate the final graph.
 function generatePlotlyPlot(plotType, plotTitle, dataObject, outputDiv) {
   const xData = dataObject.x;
   const yData = dataObject.y;
@@ -101,6 +104,7 @@ function generatePlotlyPlot(plotType, plotTitle, dataObject, outputDiv) {
     {displayModeBar: false});
 }
 
+// function that interacts with the DOM for reading in PlotLite code and drawing the resulting plotly graph. Also handles outputing error messages.
 function plotliteToPlotly() {
   let input = document.getElementById('plotliteCode').value;
   let outputDiv = document.getElementById('plotly');
