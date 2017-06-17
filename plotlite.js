@@ -8,116 +8,132 @@ The third line starts with the yData keyword, followed by data to be plotted on 
 For chart type, currently supporting scatter, bar plots.
 */
 
-// function to parse plot type and plot title line.
-function parsePlotLine(plotLine) {
-  let plotLineEndOfType = plotLine.trim().indexOf(' ');
-  let plotType = null;
-  let plotTitle = '';
+class Plotlite {
+  constructor(plotType, plotTitle, dataObject, outputDiv) {
+    this.plotType = plotType;
+    this.plotTitle = plotTitle;
+    this.dataObject = dataObject;
+    this.outputDiv = outputDiv;
+  }
 
-  if (plotLineEndOfType === -1) {
-    plotType = plotLine;
+  renderPlotlite() {
+    const xData = this.dataObject.x;
+    const yData = this.dataObject.y;
+
+    var layout = {
+      title: this.plotTitle,
+      autosize: true,
+      // width: 500,
+      // height: 300,
+      margin: {
+        t: 100, b: 0, l: 0, r: 0
+      }
+    };
+    /* global Plotly */
+    Plotly.newPlot(this.outputDiv, [{
+      x: xData,
+      y: yData,
+      type: this.plotType }],
+      layout,
+      {displayModeBar: false});
   }
-  else {
-    plotType = plotLine.slice(0, plotLineEndOfType);
-    plotTitle = plotLine.slice(plotLineEndOfType + 1).trim();
-  }
-  return {
-    plotType: plotType,
-    plotTitle: plotTitle
-  };
 }
 
-// function to parse Data line to obtain data from a specified dimension.
-function parseData(dataLine) {
+
+class PlotliteInputToOutput {
+  constructor(input, outputDiv) {
+    this.input = input;
+    this.outputDiv = outputDiv;
+  }
+
+  parsePlotlite() {
+    let plotType = null;
+    let plotTitle = '';
+    let dataObject = {};
+    let errorMessage = '';
+    let lines = this.input.split('\n');
+    let numLines = lines.length;
+
+    if (numLines > 0 && numLines < 3) {
+      errorMessage = 'Insuffient inputs. Please refer to format guide for input formatting!';
+    }
+    else if (numLines >= 3) {
+      const plotLine = lines[0];
+      ({plotType, plotTitle} = this.parsePlotLine(plotLine));
+
+      if (plotType === 'scatter' || plotType === 'bar') {
+        let dataLines = lines.slice(1); // an Array of lines(strings) containing data
+        dataLines = dataLines.filter(line => line.trim() !== ''); // throw away empty lines
+        for (let dataLine of dataLines) {
+          if (dataLine.startsWith('xData')) {
+            dataObject.x = this.parseData(dataLine);
+          }
+          else if (dataLine.startsWith('yData')) {
+            dataObject.y = this.parseData(dataLine);
+          }
+        }
+        if (!dataObject.x || !dataObject.y) {
+          errorMessage = 'Please provide xData and yData for plotting.';
+        }
+      }
+      else if (plotType !== 'scatter' && plotType !== 'bar') {
+        errorMessage = 'Undefined chart type! Supported chart types: scatter, bar.';
+      }
+    }
+    return {
+      plotlite: new Plotlite(plotType, plotTitle, dataObject, this.outputDiv),
+      errorMessage: errorMessage
+    };
+  }
+
+    // Parse plot type and plot title line.
+  parsePlotLine(plotLine) {
+    let plotLineEndOfType = plotLine.trim().indexOf(' ');
+    let plotType = null;
+    let plotTitle = '';
+
+    if (plotLineEndOfType === -1) {
+      plotType = plotLine;
+    }
+    else {
+      plotType = plotLine.slice(0, plotLineEndOfType);
+      plotTitle = plotLine.slice(plotLineEndOfType + 1).trim();
+    }
+    return {
+      plotType: plotType,
+      plotTitle: plotTitle
+    };
+  }
+
+  // Parse Data line to obtain data from a specified dimension.
+  parseData(dataLine) {
     var data = dataLine.match(/[-*.*0-9]+|\s(?=,)/g); // globally matches any signed or unsigned numbers and spaces followed by ','
 
-  return data;
-}
-
-
-// function that parses PlotLite code to get variables needed for a plotly plot.
-function parsePlotlite(input) {
-  let plotType = null;
-  let plotTitle = '';
-  let dataObject = {};
-  let errorMessage = '';
-  let lines = input.split('\n');
-  let numLines = lines.length;
-
-  if (numLines > 0 && numLines < 3) {
-    errorMessage = 'Insuffient inputs. Please refer to format guide for input formatting!';
+    return data;
   }
-  else if (numLines >= 3) {
-    const plotLine = lines[0];
-    ({plotType, plotTitle} = parsePlotLine(plotLine));
-
-    if (plotType === 'scatter' || plotType === 'bar') {
-      let dataLines = lines.slice(1); // an Array of lines(strings) containing data
-      dataLines = dataLines.filter(line => line.trim() !== ''); // throw away empty lines
-      for (let dataLine of dataLines) {
-        if (dataLine.startsWith('xData')) {
-          dataObject.x = parseData(dataLine);
-        }
-        else if (dataLine.startsWith('yData')) {
-          dataObject.y = parseData(dataLine);
-        }
-      }
-      if (!dataObject.x || !dataObject.y) {
-        errorMessage = 'Please provide xData and yData for plotting.';
-      }
-    }
-    else if (plotType !== 'scatter' && plotType !== 'bar') {
-      errorMessage = 'Undefined chart type! Supported chart types: scatter, bar.';
-    }
-  }
-  return {
-    plotType: plotType,
-    plotTitle: plotTitle,
-    dataObject: dataObject,
-    errorMessage: errorMessage
-  };
 }
 
-// function that calls plotly to generate the final graph.
-function generatePlotlyPlot(plotType, plotTitle, dataObject, outputDiv) {
-  const xData = dataObject.x;
-  const yData = dataObject.y;
 
-  var layout = {
-    title: plotTitle,
-    autosize: true,
-    // width: 500,
-    // height: 300,
-    margin: {
-      t: 100, b: 0, l: 0, r: 0
-    }
-  };
-  /* global Plotly */
-  Plotly.newPlot(outputDiv, [{
-    x: xData,
-    y: yData,
-    type: plotType }],
-    layout,
-    {displayModeBar: false});
-}
 
-// function that interacts with the DOM for reading in PlotLite code and drawing the resulting plotly graph. Also handles outputing error messages.
+// Interact with the DOM for reading in PlotLite code and drawing the resulting plotly graph. Also handles outputing error messages.
 function plotliteToPlotly() {
   let input = document.getElementById('plotliteCode').value;
   let outputDiv = document.getElementById('plotly');
-
+  let errorHTML = '';
   if (!input) {
-    outputDiv.innerHTML = 'Please input PlotLite code.';
+    errorHTML = 'Please input PlotLite code.';
   }
   else {
-    let {plotType, plotTitle, dataObject, errorMessage} = parsePlotlite(input);
+    let plotliteParser = new PlotliteInputToOutput(input, outputDiv);
+    let {plotlite, errorMessage} = plotliteParser.parsePlotlite();
 
     if (errorMessage) {
-      outputDiv.innerHTML = errorMessage;
+      errorHTML = errorMessage;
     }
     else {
       outputDiv.innerHTML = '';
-      generatePlotlyPlot(plotType, plotTitle, dataObject, outputDiv);
+      plotlite.renderPlotlite();
     }
   }
+  outputDiv.innerHTML = errorHTML;
 }
