@@ -22,25 +22,29 @@ class Plotlite {
 
     var layout = {
       title: this.plotTitle,
-      autosize: true,
-      // width: 500,
-      // height: 300,
+      // autosize: true,
+      width: 500,
+      height: 300,
       margin: {
         t: 100, b: 0, l: 0, r: 0
       }
     };
-    /* global Plotly */
-    Plotly.newPlot(this.outputDiv, [{
+    console.log('Before calling Plotly outputDiv is:', this.outputDiv);
+    let data = [{
       x: xData,
       y: yData,
-      type: this.plotType }],
-      layout,
-      {displayModeBar: false});
+      type: this.plotType }];
+
+    /* global Plotly */
+    Plotly.newPlot(
+      this.outputDiv,
+      data,
+      layout);
   }
 }
 
 
-class PlotliteInputToOutput {
+class PlotliteParser {
   constructor(input, outputDiv) {
     this.input = input;
     this.outputDiv = outputDiv;
@@ -80,6 +84,8 @@ class PlotliteInputToOutput {
         errorMessage = 'Undefined chart type! Supported chart types: scatter, bar.';
       }
     }
+    // console.log(plotType, plotTitle, errorMessage);
+    // console.log(new Plotlite(plotType, plotTitle, dataObject, this.outputDiv));
     return {
       plotlite: new Plotlite(plotType, plotTitle, dataObject, this.outputDiv),
       errorMessage: errorMessage
@@ -108,7 +114,6 @@ class PlotliteInputToOutput {
   // Parse Data line to obtain data from a specified dimension.
   parseData(dataLine) {
     var data = dataLine.match(/[-*.*0-9]+|\s(?=,)/g); // globally matches any signed or unsigned numbers and spaces followed by ','
-
     return data;
   }
 }
@@ -119,12 +124,14 @@ class PlotliteInputToOutput {
 function plotliteToPlotly() {
   let input = document.getElementById('plotliteCode').value;
   let outputDiv = document.getElementById('plotly');
+  console.log('outputDiv is:', outputDiv);
+
   let errorHTML = '';
   if (!input) {
     errorHTML = 'Please input PlotLite code.';
   }
   else {
-    let plotliteParser = new PlotliteInputToOutput(input, outputDiv);
+    let plotliteParser = new PlotliteParser(input, outputDiv);
     let {plotlite, errorMessage} = plotliteParser.parsePlotlite();
 
     if (errorMessage) {

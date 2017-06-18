@@ -10,7 +10,8 @@ button#plotButton {
 	background: lightgrey;
 }
 div.plotBox {
-	width:100%;
+	width:500px;
+	height:500px;
 	margin: auto;
-  border: 2px solid grey;
+  border: 2px solid red;
 }
