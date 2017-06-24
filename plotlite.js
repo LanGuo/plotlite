@@ -15,12 +15,21 @@ class Plotlite {
     this.dataObject = dataObject;
     this.outputDiv = outputDiv;
   }
+}
 
-  renderPlotlite() {
+class Renderer {
+  constructor 
+  // potentially constructor can take a style object
+
+  // this function can return a function that can be call after the Renderer object is long gone.
+  renderDefer
+
+  
+  renderPlotlite(Plotlite, outputDiv) {
     const xData = this.dataObject.x;
     const yData = this.dataObject.y;
 
-    var layout = {
+    let layout = {
       title: this.plotTitle,
       // autosize: true,
       width: 500,
@@ -29,12 +38,11 @@ class Plotlite {
         t: 100, b: 0, l: 0, r: 0
       }
     };
-    console.log('Before calling Plotly outputDiv is:', this.outputDiv);
+
     let data = [{
       x: xData,
       y: yData,
       type: this.plotType }];
-
     /* global Plotly */
     Plotly.newPlot(
       this.outputDiv,
@@ -116,31 +124,4 @@ class PlotliteParser {
     var data = dataLine.match(/[-*.*0-9]+|\s(?=,)/g); // globally matches any signed or unsigned numbers and spaces followed by ','
     return data;
   }
-}
-
-
-
-// Interact with the DOM for reading in PlotLite code and drawing the resulting plotly graph. Also handles outputing error messages.
-function plotliteToPlotly() {
-  let input = document.getElementById('plotliteCode').value;
-  let outputDiv = document.getElementById('plotly');
-  console.log('outputDiv is:', outputDiv);
-
-  let errorHTML = '';
-  if (!input) {
-    errorHTML = 'Please input PlotLite code.';
-  }
-  else {
-    let plotliteParser = new PlotliteParser(input, outputDiv);
-    let {plotlite, errorMessage} = plotliteParser.parsePlotlite();
-
-    if (errorMessage) {
-      errorHTML = errorMessage;
-    }
-    else {
-      outputDiv.innerHTML = '';
-      plotlite.renderPlotlite();
-    }
-  }
-  outputDiv.innerHTML = errorHTML;
 }
